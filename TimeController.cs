@@ -46,6 +46,7 @@ public class TimeController : MonoBehaviour
         Debug.Log("Changing timescale");
         lastTimeScale = timeScale;
         timeScale = newTimeScale;
+        UpdateTimeFlows();
     }
 
     void UpdateTimeFlows()

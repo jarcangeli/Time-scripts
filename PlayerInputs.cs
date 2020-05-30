@@ -28,6 +28,9 @@ public class PlayerInputs : MonoBehaviour
     Camera mainCamera;
     Gun gun;
 
+    [SerializeField] Transform characterSprite = null;
+    [SerializeField] Transform gunSprite = null;
+
     private void Awake()
     {
         player = this;
@@ -35,9 +38,11 @@ public class PlayerInputs : MonoBehaviour
 
     private void Start()
     {
+        // Cache own components
         timeFlow = GetComponent<TimeFlow>();
         rb = GetComponent<Rigidbody2D>();
         gun = GetComponent<Gun>();
+
         health = GetComponent<Health>();
         health.OnDeath += OnDeath;
 
@@ -68,7 +73,7 @@ public class PlayerInputs : MonoBehaviour
     {
         if (Input.GetKeyDown(jumpKey) && (isGrounded || !doubleJumped))
         {
-            float jumpVel = jumpForce * timeFlow.timeScale;
+            float jumpVel = timeFlow.GetVelocity(jumpForce);
             if (doubleJumped) jumpVel /= 2f;
 
             rb.velocity = new Vector2(rb.velocity.x, jumpVel);
@@ -76,13 +81,28 @@ public class PlayerInputs : MonoBehaviour
             if (!isGrounded) { doubleJumped = true; }
         }
 
+        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        FaceMouse(mousePosition);
+        gun.PointGun(mousePosition);
         if (Input.GetMouseButton(0) && gun.CanFire())
         {
-            Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             gun.FireGun(mousePosition);
         }
     }
 
+    void FaceMouse(Vector2 mousePosition)
+    {
+        if (mousePosition.x > transform.position.x)
+        {
+            characterSprite.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            gunSprite.localRotation = Quaternion.Euler(gunSprite.localRotation.eulerAngles.x, 0f, gunSprite.localRotation.eulerAngles.z);
+        }
+        else if (mousePosition.x < transform.position.x)
+        {
+            characterSprite.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            gunSprite.localRotation = Quaternion.Euler(gunSprite.localRotation.eulerAngles.x, 180f, gunSprite.localRotation.eulerAngles.z);
+        }
+    }
     public void OnDrawGizmosSelected()
     {
         // Draw the ground check radius

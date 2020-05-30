@@ -8,7 +8,6 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("Bullet hit " + collider.name);
         if (collider.GetComponent<Health>() is Health hp)
         {
             hp.OnDamage(damage);
@@ -18,6 +17,7 @@ public class Bullet : MonoBehaviour
 
     void DestroySelf()
     {
-        Destroy(gameObject);
+        GetComponentInChildren<Animator>().SetTrigger("ImpactTrigger");
+        Destroy(gameObject, 0.1f);
     }
 }

@@ -24,8 +24,13 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
     void Start()
     {
         targetPos = FindObjectOfType<ClockCenter>().transform.position;
-
+        if (targetPos.x > transform.position.x)
+        {
+            transform.right *= -1;
+        }
         GetComponent<Health>().OnDeath += OnDeath;
+
+        GetComponentInChildren<Animator>().SetTrigger("FlyTrigger");
     }
 
     void OnDeath()
@@ -42,7 +47,8 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
         if (!sucking)
         {
             Vector2 direction = targetPos - (Vector2)transform.position;
-            rb.MovePosition((Vector2)transform.position + direction * speed * Time.fixedDeltaTime * timeFlow.timeScale);
+            Vector2 move = direction * speed * Time.fixedDeltaTime * timeFlow.timeScale;
+            rb.MovePosition((Vector2)transform.position + move);
         }
     }
     public void Act()
@@ -54,6 +60,7 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
             sucking = true;
             Debug.Log("ZZuukkkk");
             TimeController.current.ChangeTimeScale(TimeController.current.timeScale * timeMult);
+            GetComponentInChildren<Animator>().SetTrigger("SuckTrigger");
         }
     }
 }

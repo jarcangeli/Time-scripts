@@ -16,7 +16,9 @@ public class EnemyController : MonoBehaviour
 
     void OnDeath()
     {
-        Destroy(gameObject);
+        GetComponentInChildren<Animator>().SetTrigger("DeathTrigger");
+        GetComponent<Collider2D>().enabled = false;
+        Destroy(gameObject, .5f);
     }
 
     void FixedUpdate()

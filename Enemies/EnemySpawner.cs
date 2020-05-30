@@ -6,17 +6,23 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     GameObject[] enemyPrefabs = null;
 
+    Health playerHealth;
+
     Vector2[] spawnPositions;
     float lastSpawn = 0f;
+    float lastSpawnIncrease = 0f;
     [SerializeField]
     float spawnDelay = 3f;
     [SerializeField]
     int spawnNumber = 3;
-    float spawnRadius = 3f;
+    int maxSpawnNumber = 6;
+    float spawnIncreaseTime = 30f;
+    float spawnRadius = 4f;
 
     void Awake()
     {
         SetSpawnPositions();
+        playerHealth = FindObjectOfType<PlayerInputs>().GetComponent<Health>();
     }
 
     void SetSpawnPositions()
@@ -34,10 +40,15 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time > lastSpawn + spawnDelay)
+        if (Time.time > lastSpawn + spawnDelay && playerHealth.currHealth > 0)
         {
             SpawnEnemies();
             lastSpawn = Time.time;
+        }
+        if (Time.time > lastSpawnIncrease + spawnIncreaseTime && spawnNumber < maxSpawnNumber)
+        {
+            ++spawnNumber;
+            lastSpawnIncrease = Time.time;
         }
     }
 
@@ -56,5 +67,10 @@ public class EnemySpawner : MonoBehaviour
             spawnIndices.Remove(ind);
             enemy.transform.position = spawnPositions[ind];
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(Vector3.zero, spawnRadius);
     }
 }
