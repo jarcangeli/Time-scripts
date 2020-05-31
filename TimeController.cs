@@ -1,5 +1,6 @@
 ﻿using System;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class TimeController : MonoBehaviour
@@ -8,7 +9,7 @@ public class TimeController : MonoBehaviour
 
     // track elapsed time and format it
     float currTime = 0f;
-    DateTime dateTime; 
+    DateTime dateTime;
     public float timeScale = 1f;
     public float lastTimeScale = 1f;
 
@@ -35,10 +36,19 @@ public class TimeController : MonoBehaviour
 
     void StartTimeTrack()
     {
-        currTime = ReadCurrentHands();
+        currTime = RandomStartTime();// ReadCurrentHands();
         dateTime = new DateTime();
         dateTime = dateTime.AddSeconds(currTime);
         Debug.Log("Starting at " + currTime);
+    }
+
+    float RandomStartTime()
+    {
+        float startTime = 0f;
+        startTime += UnityEngine.Random.Range(0, 12f) * 60f * 60f;
+        startTime += UnityEngine.Random.Range(0, 60f) * 60f;
+        startTime += UnityEngine.Random.Range(0, 60f);
+        return startTime;
     }
 
     public void ChangeTimeScale(float newTimeScale)

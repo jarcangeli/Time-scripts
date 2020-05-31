@@ -35,7 +35,6 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
 
     void OnDeath()
     {
-        Debug.Log("Stopped zuk");
         if (sucking)
         {
             TimeController.current.ChangeTimeScale(TimeController.current.timeScale / timeMult);
@@ -46,7 +45,7 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
     {
         if (!sucking)
         {
-            Vector2 direction = targetPos - (Vector2)transform.position;
+            Vector2 direction = (targetPos - (Vector2)transform.position).normalized;
             Vector2 move = direction * speed * Time.fixedDeltaTime * timeFlow.timeScale;
             rb.MovePosition((Vector2)transform.position + move);
         }
@@ -58,9 +57,13 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
             rb.isKinematic = true;
             rb.velocity = Vector3.zero;
             sucking = true;
-            Debug.Log("ZZuukkkk");
             TimeController.current.ChangeTimeScale(TimeController.current.timeScale * timeMult);
             GetComponentInChildren<Animator>().SetTrigger("SuckTrigger");
         }
+    }
+
+    public void Superify()
+    {
+        speed *= 2;
     }
 }

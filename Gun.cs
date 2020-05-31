@@ -14,9 +14,9 @@ public class Gun : MonoBehaviour
     [SerializeField]
     float fireVelocity = 1f;
     float lastShot = 0f;
-    [SerializeField]
-    float shotDelay = 0.2f;
+    public float shotDelay = 0.2f;
 
+    [SerializeField] string shotSound = "";
     private void Awake()
     {
         timeFlow = GetComponent<TimeFlow>();
@@ -32,6 +32,7 @@ public class Gun : MonoBehaviour
         PointGun(targetPos);
         FireBullet();
         lastShot = Time.time;
+        if (shotSound != "") AudioManager.instance.Play(shotSound);
     }
 
     public void PointGun(Vector2 targetPos)

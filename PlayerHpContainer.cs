@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHpContainer : MonoBehaviour
 {
@@ -9,12 +8,12 @@ public class PlayerHpContainer : MonoBehaviour
 
     Health playerHp;
     GameObject[] hpHearts;
+    [SerializeField] Color emptyColor = Color.white;
     // Start is called before the first frame update
     void Start()
     {
         playerHp = PlayerInputs.player.GetComponent<Health>();
         if (playerHp == null) playerHp = new Health(); // default to 1 hp
-        Debug.Log("Player HP: " + playerHp);
         hpHearts = GenerateHeartObjects();
 
         DrawHeartObjects();
@@ -29,6 +28,12 @@ public class PlayerHpContainer : MonoBehaviour
             GameObject hpHeart = Instantiate(hpHeartPrefab, transform);
             hpHeart.transform.localPosition = new Vector3(size * (i - 0.5f), 0f, 0f);
             newHpHearts[i] = hpHeart;
+
+            GameObject emptyHpHeart = Instantiate(hpHeartPrefab, transform);
+            emptyHpHeart.name = "EmptyHpHeart";
+            emptyHpHeart.transform.localPosition = new Vector3(size * (i - 0.5f), 0f, 0f);
+            emptyHpHeart.transform.localPosition += Vector3.forward;
+            emptyHpHeart.GetComponent<Image>().color = emptyColor;
         }
         return newHpHearts;
     }

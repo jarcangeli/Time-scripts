@@ -11,19 +11,21 @@ public class SquidAI : MonoBehaviour, IAIBehaviour
 
     Gun gun;
 
-    void Start()
+    void Awake()
     {
         timeFlow = GetComponent<TimeFlow>();
-        gun = GetComponent<Gun>();
+        gun = GetComponentInChildren<Gun>();
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f; // flying
-
+    }
+    void Start() 
+    {
         player = FindObjectOfType<PlayerInputs>().transform;
     }
 
     public void Move()
     {
-        Vector2 direction = player.position - transform.position;
+        Vector2 direction = (player.position - transform.position).normalized;
         rb.MovePosition((Vector2)transform.position + direction * speed * Time.fixedDeltaTime * timeFlow.timeScale);
     }
     public void Act()
@@ -31,8 +33,13 @@ public class SquidAI : MonoBehaviour, IAIBehaviour
         if (gun.CanFire())
         {
             gun.FireGun(player.position);
-            Debug.Log(transform.name + " shot bullet");
+            GetComponentInChildren<Animator>().SetTrigger("ShootTrigger");
         }
     }
 
+    public void Superify()
+    {
+        gun.shotDelay /= 2f;
+        speed *= 2;
+    }
 }

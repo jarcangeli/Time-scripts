@@ -32,14 +32,8 @@ public class TimeFlow : MonoBehaviour
     {
         if (feelFlow)
         {
-            Debug.Log(rb);
-            Debug.Log(TimeController.current);
             rb.velocity = rb.velocity / TimeController.current.lastTimeScale * TimeController.current.timeScale;
             rb.gravityScale = gravityScale * TimeController.current.timeScale * TimeController.current.timeScale;
-            if (GetComponent<PlayerInputs>() != null)
-            {
-                Debug.Log("Set gravity scale to " + rb.gravityScale);
-            }
         }
         else
         {

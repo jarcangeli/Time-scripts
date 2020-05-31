@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -12,17 +13,26 @@ public class EnemySpawner : MonoBehaviour
     float lastSpawn = 0f;
     float lastSpawnIncrease = 0f;
     [SerializeField]
-    float spawnDelay = 3f;
+    float spawnDelay = 6f;
     [SerializeField]
     int spawnNumber = 3;
-    int maxSpawnNumber = 6;
+    [SerializeField]
+    int maxSpawnNumber = 5;
+    [SerializeField]
+    int maxTotalNumber = 10;
     float spawnIncreaseTime = 30f;
     float spawnRadius = 4f;
 
+    [SerializeField] float superTime = 200f;
+    [SerializeField] Color superColor = Color.red;
+
     void Awake()
     {
+        lastSpawn = Time.time - spawnDelay + 2f;
         SetSpawnPositions();
         playerHealth = FindObjectOfType<PlayerInputs>().GetComponent<Health>();
+
+        Debug.Log("Calling EnemySpawner Awake");
     }
 
     void SetSpawnPositions()
@@ -54,14 +64,21 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemies()
     {
+        int nAlive = CountAliveEnemies();
+        Debug.Log(nAlive + " enemies alive");
+
         List<int> spawnIndices = new List<int>();
         for (int ind = 0; ind < spawnPositions.Length; ++ind) { spawnIndices.Add(ind); }
 
-        for (int i = 0; i < spawnNumber && i < spawnIndices.Count; ++i)
+        for (int i = 0; i < spawnNumber && i < spawnIndices.Count && nAlive + i < maxTotalNumber; ++i)
         {
             // get a random enemy type
             GameObject enemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]);
-
+            // supe it up maybe?
+            if (UnityEngine.Random.value < Time.time / superTime)
+            {
+                 Superify(enemy);
+            }
             // find a unique position
             int ind = spawnIndices[Random.Range(0, spawnIndices.Count)];
             spawnIndices.Remove(ind);
@@ -69,6 +86,22 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    void Superify(GameObject enemy)
+    {
+        if (enemy.GetComponentInChildren<SpriteRenderer>() is SpriteRenderer sprite)
+        {
+            sprite.color = superColor;
+        }
+        if (enemy.GetComponent<IAIBehaviour>() is IAIBehaviour enemyAI)
+        {
+            enemyAI.Superify();
+        }
+    }
+
+    int CountAliveEnemies()
+    {
+        return FindObjectsOfType<EnemyController>().Length;
+    }
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(Vector3.zero, spawnRadius);

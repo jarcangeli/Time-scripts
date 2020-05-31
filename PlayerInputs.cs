@@ -20,8 +20,7 @@ public class PlayerInputs : MonoBehaviour
     Transform groundCheck = null;
     [SerializeField]
     float groundRadius = 0.1f;
-    [SerializeField]
-    bool isGrounded = false;
+    public bool isGrounded = false;
     int groundLayer;
     bool doubleJumped = false;
 
@@ -31,6 +30,7 @@ public class PlayerInputs : MonoBehaviour
     [SerializeField] Transform characterSprite = null;
     [SerializeField] Transform gunSprite = null;
 
+    bool upAxisInUse = false;
     private void Awake()
     {
         player = this;
@@ -52,8 +52,8 @@ public class PlayerInputs : MonoBehaviour
 
     void OnDeath()
     {
-        Debug.Log("Game Over");
         this.enabled = false;
+        GetComponentInChildren<Animator>().enabled = false;
         transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 90f));
     }
     void FixedUpdate()
@@ -71,8 +71,12 @@ public class PlayerInputs : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(jumpKey) && (isGrounded || !doubleJumped))
+        if (Input.GetAxis("Vertical") <= 0) upAxisInUse = false;
+
+        if ( PressedJump() && (isGrounded || !doubleJumped))
         {
+            upAxisInUse = true;
+            AudioManager.instance.Play("Jump");
             float jumpVel = timeFlow.GetVelocity(jumpForce);
             if (doubleJumped) jumpVel /= 2f;
 
@@ -88,6 +92,11 @@ public class PlayerInputs : MonoBehaviour
         {
             gun.FireGun(mousePosition);
         }
+    }
+
+    bool PressedJump()
+    {
+        return Input.GetKeyDown(jumpKey) || (Input.GetAxis("Vertical") > 0 && !upAxisInUse);
     }
 
     void FaceMouse(Vector2 mousePosition)

@@ -2,4 +2,6 @@
 {
     void Move();
     void Act();
+
+    void Superify();
 }

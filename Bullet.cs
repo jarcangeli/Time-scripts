@@ -5,19 +5,26 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public int damage = 1;
+    bool hit = false;
+    Animator animator;
 
+    private void Awake()
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.GetComponent<Health>() is Health hp)
         {
             hp.OnDamage(damage);
         }
-        DestroySelf();
+        if (!hit) DestroySelf();
     }
 
     void DestroySelf()
     {
-        GetComponentInChildren<Animator>().SetTrigger("ImpactTrigger");
-        Destroy(gameObject, 0.1f);
+        hit = true;
+        if (animator != null) animator.SetTrigger("ImpactTrigger");
+        else Destroy(gameObject);
     }
 }
