@@ -24,7 +24,7 @@ public class VelocitySprites : MonoBehaviour
         {
             bodySprite.sprite = jumpSprite;
         }
-        else if (Mathf.Abs(rb.velocity.x) > 0.1)
+        else if (Mathf.Abs(rb.velocity.x) > 0.5)
         {
             bodySprite.sprite = sideSprite; 
         }

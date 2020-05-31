@@ -8,6 +8,7 @@ public class EnemyController : MonoBehaviour
     Health health;
     [SerializeField] GameObject deathEffectPrefab;
     [SerializeField] GameObject spawnEffectPrefab;
+    [SerializeField] float overlapForce = 1f;
 
     public event Action EnemyDied;
 
@@ -37,5 +38,15 @@ public class EnemyController : MonoBehaviour
     {
         behaviour.Move();
         behaviour.Act();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.GetComponent<EnemyController>() is EnemyController enemy)
+        {
+            Debug.Log($"Pushing {transform.name} away from {enemy.transform.name}");
+            Vector2 force = (transform.position - collision.transform.position).normalized * overlapForce;
+            enemy.GetComponent<Rigidbody2D>().AddForce(force);
+        }
     }
 }

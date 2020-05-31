@@ -65,5 +65,6 @@ public class LeechAI : MonoBehaviour, IAIBehaviour
     public void Superify()
     {
         speed *= 2;
+        timeFlow.feelFlow = false;
     }
 }

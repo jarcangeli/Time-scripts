@@ -10,29 +10,27 @@ public class EnemySpawner : MonoBehaviour
     Health playerHealth;
 
     Vector2[] spawnPositions;
+    float startTime = 0f;
     float lastSpawn = 0f;
     float lastSpawnIncrease = 0f;
-    [SerializeField]
-    float spawnDelay = 6f;
-    [SerializeField]
-    int spawnNumber = 3;
-    [SerializeField]
-    int maxSpawnNumber = 5;
-    [SerializeField]
-    int maxTotalNumber = 10;
-    float spawnIncreaseTime = 30f;
+    [SerializeField] float spawnDelay = 6f;
+    [SerializeField] int spawnNumber = 3;
+    [SerializeField] int maxSpawnNumber = 5;
+    [SerializeField] int maxTotalNumber = 10;
+    [SerializeField] float spawnIncreaseTime = 30f;
     float spawnRadius = 4f;
 
     [SerializeField] float superTime = 200f;
     [SerializeField] Color superColor = Color.red;
+    [SerializeField] Color superColor2 = Color.magenta;
 
     void Awake()
     {
+        startTime = Time.time;
         lastSpawn = Time.time - spawnDelay + 2f;
+        lastSpawnIncrease = Time.time;
         SetSpawnPositions();
         playerHealth = FindObjectOfType<PlayerInputs>().GetComponent<Health>();
-
-        Debug.Log("Calling EnemySpawner Awake");
     }
 
     void SetSpawnPositions()
@@ -65,7 +63,6 @@ public class EnemySpawner : MonoBehaviour
     void SpawnEnemies()
     {
         int nAlive = CountAliveEnemies();
-        Debug.Log(nAlive + " enemies alive");
 
         List<int> spawnIndices = new List<int>();
         for (int ind = 0; ind < spawnPositions.Length; ++ind) { spawnIndices.Add(ind); }
@@ -75,9 +72,13 @@ public class EnemySpawner : MonoBehaviour
             // get a random enemy type
             GameObject enemy = Instantiate(enemyPrefabs[Random.Range(0, enemyPrefabs.Length)]);
             // supe it up maybe?
-            if (UnityEngine.Random.value < Time.time / superTime)
+            if (UnityEngine.Random.value < (Time.time - startTime) / superTime)
             {
-                 Superify(enemy);
+                Superify(enemy);
+                if (UnityEngine.Random.value < (Time.time - startTime) / superTime)
+                {
+                    Supersuperify(enemy);
+                }
             }
             // find a unique position
             int ind = spawnIndices[Random.Range(0, spawnIndices.Count)];
@@ -91,6 +92,17 @@ public class EnemySpawner : MonoBehaviour
         if (enemy.GetComponentInChildren<SpriteRenderer>() is SpriteRenderer sprite)
         {
             sprite.color = superColor;
+        }
+        if (enemy.GetComponent<IAIBehaviour>() is IAIBehaviour enemyAI)
+        {
+            enemyAI.Superify();
+        }
+    }
+    void Supersuperify(GameObject enemy)
+    {
+        if (enemy.GetComponentInChildren<SpriteRenderer>() is SpriteRenderer sprite)
+        {
+            sprite.color = superColor2;
         }
         if (enemy.GetComponent<IAIBehaviour>() is IAIBehaviour enemyAI)
         {
