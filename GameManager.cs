@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     void OnLoss()
     {
         gameOverScreen.SetActive(true);
-        string text = $"Game over.\nYou survived {(int)(Time.time - startTime)} seconds\nKilling {enemiesKilled} aliens";
+        string text = $"You survived {(int)(Time.time - startTime)} seconds\nKilling {enemiesKilled} aliens";
         gameOverText.text = text;
     }
 
